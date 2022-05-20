@@ -1,24 +1,21 @@
 import time
-from telnetlib import EC
-
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import ElementClickInterceptedException
 
-USERNAME = "testttesttest5"
-PASSWORD = "olaola03"
+USERNAME = ''  # YOUR_INSTA_USER_NAME
+PASSWORD = ''  # PASSWORD
 INSTA_URL = "https://www.instagram.com/"
-SIMILAR_ACC = "moriahmillsofficialpage"
-CHROME_DRIVER_PATH = r"C:\Users\OLA\Development\chromedriver.exe"
+SIMILAR_ACC = ''  # LINK_TO_FOLLOW
+CHROME_DRIVER_PATH = r"C:\Users\OLA\Development\chromedriver.exe"  # SET YOUR CHROME DRIVER TO THIS DIRECTORY
 
 
 class InstaFollower:
     def __init__(self):
         driver_path = Service(CHROME_DRIVER_PATH)
         self.driver = webdriver.Chrome(service=driver_path)
-        self.following = None
+        self.__following = None
 
     def login(self):
         self.driver.get(INSTA_URL)
@@ -38,25 +35,24 @@ class InstaFollower:
         self.driver.get(INSTA_URL + SIMILAR_ACC)
 
         time.sleep(5)
-        following = self.driver.find_elements(by=By.CSS_SELECTOR, value='section ul a')[1]
-        following.click()
+        following_button = self.driver.find_elements(by=By.CSS_SELECTOR, value='section ul a')[1]
+        following_button.click()
         time.sleep(5)
         pop_up = self.driver.find_element(by=By.XPATH, value='/html/body/div[6]/div/div/div/div[3]')
 
-        for i in range(20):
+        for i in range(5):
             self.driver.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", pop_up)
             time.sleep(2)
 
-        self.following = self.driver.find_elements(by=By.CSS_SELECTOR, value="ul li button")
-        return self.following
+        self.__following = self.driver.find_elements(by=By.CSS_SELECTOR, value="li button")
+        return self.__following
 
-    def follow(self, all_followers):
+    @staticmethod
+    def follow(all_followers):
         for follower in all_followers:
-            try:
+            if follower.text == 'Follow':
                 follower.click()
-                time.sleep(3.5)
-            except ElementClickInterceptedException:
-                self.driver.find_element(by=By.XPATH, value='/html/body/div[7]/div/div/div/div[3]/button[2]').click()
+                time.sleep(3)
 
 
 insta = InstaFollower()
